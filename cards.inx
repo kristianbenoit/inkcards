@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+    <_name>Cards</_name>
+    <id>org.ekips.filter.cards</id>
+    <dependency type="executable" location="extensions">cards.py</dependency>
+    <dependency type="executable" location="extensions">inkex.py</dependency>
+    <_param name="introduction" type="description">
+        This extension let you use the same SVG for multiple page and reuse layers for the framing.
+    </_param>
+    <_param name="introduction" type="description"></_param>
+
+    <param name="file" type="string" _gui-text="Config file" _gui-description="File containing a description of layers per page.">/tmp/inkcards.conf</param>
+
+
+    <param name="tab" type="notebook">
+        <page name="show" _gui-text="Show page">
+            <param name="pageNo" type="int" min="1" max="100" _gui-text="Activate page number" _gui-description="Show the layer for the page nunbered">0</param>
+        </page>
+	<page name="exportAll" _gui-text="Export all pages">
+            <_param name="doc" type="description">Click on apply to export all pages described in the config file.</_param>
+	</page>
+        <page name="help" _gui-text="Help">
+		<_param name="doc" type="description">In this extension, the tabs are a sort of submenu. If you click on apply only the tab shown is considered.</_param>
+		<_param type="description">TODO: put help in another element of the submenu.</_param>
+		<_param name="doc" type="description">Click apply to show more help.</_param>
+        </page>
+    </param>
+
+    <effect needs-live-preview="false">
+        <object-type>all</object-type>
+        <effects-menu>
+            <submenu _name="Export"/>
+        </effects-menu>
+    </effect>
+    <script>
+        <command reldir="extensions" interpreter="python">cards.py</command>
+    </script>
+</inkscape-extension>
+
