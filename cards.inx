@@ -11,18 +11,17 @@
 
     <param name="file" type="string" _gui-text="Config file" _gui-description="File containing a description of layers per page.">/tmp/inkcards.conf</param>
 
-
     <param name="tab" type="notebook">
         <page name="show" _gui-text="Show page">
             <param name="pageNo" type="int" min="1" max="100" _gui-text="Activate page number" _gui-description="Show the layer for the page nunbered">0</param>
         </page>
-	<page name="exportAll" _gui-text="Export all pages">
+        <page name="exportAll" _gui-text="Export all pages">
             <_param name="doc" type="description">Click on apply to export all pages described in the config file.</_param>
-	</page>
+        </page>
         <page name="help" _gui-text="Help">
-		<_param name="doc" type="description">In this extension, the tabs are a sort of submenu. If you click on apply only the tab shown is considered.</_param>
-		<_param type="description">TODO: put help in another element of the submenu.</_param>
-		<_param name="doc" type="description">Click apply to show more help.</_param>
+            <_param name="doc" type="description">In this extension, the tabs are a sort of submenu. If you click on apply only the tab shown is considered.</_param>
+            <_param type="description">TODO: put help in another element of the submenu.</_param>
+            <_param name="doc" type="description">Click apply to show more help.</_param>
         </page>
     </param>
 
