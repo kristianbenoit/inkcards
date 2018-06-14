@@ -1,0 +1,5 @@
+This is an inkscape extension to handle using layers in multiple pages, mostly
+useful with cards. To install, the files named cards.inx and cards.py need to
+be in the inkscape extension dir (on Ubuntu: /usr/share/inkscape/extension).
+The extension should then (upon restart) be available in the menu
+extensions/export/cards...
