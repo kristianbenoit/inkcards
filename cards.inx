@@ -5,7 +5,7 @@
     <dependency type="executable" location="extensions">cards.py</dependency>
     <dependency type="executable" location="extensions">inkex.py</dependency>
     <_param name="introduction" type="description">
-        This extension let you use the same SVG for multiple page and reuse layers for the framing.
+        This extension let you use the same SVG for multiple pages so you can reuse some layers.
     </_param>
     <_param name="introduction" type="description"></_param>
 
@@ -13,15 +13,16 @@
 
     <param name="tab" type="notebook">
         <page name="show" _gui-text="Show page">
-            <param name="pageNo" type="int" min="1" max="100" _gui-text="Activate page number" _gui-description="Show the layer for the page nunbered">0</param>
+            <param name="pageNo" type="int" min="1" max="100" _gui-text="Activate page number" _gui-description="Set visible only the layers configuted for the page nunbered">0</param>
         </page>
         <page name="exportAll" _gui-text="Export all pages">
             <_param name="doc" type="description">Click on apply to export all pages described in the config file.</_param>
         </page>
+        <page name="conf" _gui-text="Generate config">
+            <_param name="doc" type="description">Generate config file skeleton.</_param>
+        </page>
         <page name="help" _gui-text="Help">
-            <_param name="doc" type="description">In this extension, the tabs are a sort of submenu. If you click on apply only the tab shown is considered.</_param>
-            <_param type="description">TODO: put help in another element of the submenu.</_param>
-            <_param name="doc" type="description">Click apply to show more help.</_param>
+            <_param name="doc" type="description">In this extension, the tabs are a sort of submenu. If you click on apply only the tab shown is considered. You can access more information on how to select layers per page in the generated config skeleton.</_param>
         </page>
     </param>
 

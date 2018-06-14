@@ -40,32 +40,50 @@ class extention(inkex.Effect):
                                      help='The page number to activate the layers, hide the others.')
         self.getoptions()
 
-    def pageParams(self):
-        line = linecache.getline(self.options.file, self.options.page)
-        return line.split()
-
     def effect(self):
-        configFile = self.options.file
         config = ConfigParser.ConfigParser()
-        config.read(configFile)
+        allLayers = self.document.xpath("//svg:g[@inkscape:groupmode='layer']", namespaces=inkex.NSS)
+        self.options.tab = self.options.tab.strip('"')
 
-        if self.options.tab is "exportAll":
-            inkex.errormsg("export all pages is not yet implemented.\nself.__dict__=" + str(self.__dict__))
-        else:
-            svg_filename = self.args[-1]
-            self.parse(svg_filename)
-            allLayers = self.document.xpath("//svg:g[@inkscape:groupmode='layer']", namespaces=inkex.NSS)
+        if self.options.tab == 'conf':
+            if os.path.isfile(self.options.file):
+                inkex.errormsg("File (%s) already exist, remove it first." % (self.options.file))
+                return
+
+            config.add_section('page 1')
+            layerStr=""
             for l in allLayers:
-                # Turn off the visibility of all layer
-                l.set("style", "display:none")
+                layerStr += l.attrib['{' + inkex.NSS["inkscape"] + '}label'] + ", " 
+            config.set('page 1', "layers", layerStr[:-2])
 
-                # Switch on the visibitity of layers specified in the config file
+            configFile = file(self.options.file, 'w')
+            configFile.write(
+                "# This is a ini style config file, where you define all layers that compose\n"
+                "# a page.\n#\n"
+                "# Like so:\n\n")
+            config.write(configFile)
+
+        else:
+            config.read(self.options.file)
+
+            if self.options.tab == "exportAll":
+                inkex.errormsg("export all pages is not yet implemented.")
+
+            elif self.options.tab == "show":
                 pageName = "page " + str(self.options.page)
-                visibleLayers = map(str.strip, config.get(pageName, "Layers").split(","))
-                if l.attrib['{' + inkex.NSS["inkscape"] + '}label'] in visibleLayers:
-                    l.set("style", "display:inline")
+                if pageName not in config.sections():
+                    inkex.errormsg("No such section (%s), in %s" % (pageName, self.options.file))
+                    return
 
-                #inkex.errormsg("Put debug info here.")
+                visibleLayers = map(str.strip, config.get(pageName, "Layers").split(","))
+                for l in allLayers:
+                    # Switch on the visibitity of layers specified in the config file
+                    if l.attrib['{' + inkex.NSS["inkscape"] + '}label'] in visibleLayers:
+                        l.set("style", "display:inline")
+                    else:
+                        # Turn off the visibility of all other layers
+                        l.set("style", "display:none")
+
 
 
 if __name__ == "__main__":
