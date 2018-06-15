@@ -15,4 +15,4 @@ $(dest): $(pages)
 	python2 ~/dev/inkcards/cards.py --tab=show --page=$(shell echo $@ | head -c -5) --file=$(conf_file) -- $(SVG_src) | rsvg-convert -f pdf -o $@ /dev/stdin
 
 clean:
-	rm $(dest) $(pages)
+	-rm $(dest) $(pages)

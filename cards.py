@@ -18,11 +18,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 '''
 
 import sys
-import inkex
 import os
 from shutil import copyfile
 import ConfigParser
-#from lxml import etree
+
+sys.path.append('/usr/share/inkscape/extensions')
+import inkex
 
 class extention(inkex.Effect):
     def __init__(self):

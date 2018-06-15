@@ -3,3 +3,14 @@ useful with cards. To install, the files named cards.inx and cards.py need to
 be in the inkscape extension dir (on Ubuntu: /usr/share/inkscape/extension).
 The extension should then (upon restart) be available in the menu
 extensions/export/cards...
+
+A Makefile is also available to generate a pdf with all the pages. To use it,
+you first need to install "librsvg2-bin" and to set the variable at the start
+of the file.
+
+See https://boardgamegeek.com/thread/490643/making-cards-youll-never-use-your-old-method-again
+to know how to print on cards. If you print on both side of cardboard, you
+should draw it so that cards side match by folding on long edge.
+
+The extension is hardcoded with Linux in mind and need changes to fit on
+Windows, perhaps OSx also.
