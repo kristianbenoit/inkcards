@@ -13,6 +13,8 @@ PDF_pages:=$(patsubst %, %.pdf, $(pages))
 $(dest): $(PDF_pages)
 	pdfunite $^ $@
 
+$(SVG_src): ;
+
 %.svg: $(SVG_src)
 	python2 ~/dev/inkcards/cards.py --tab=show --page=$(shell echo $@ | head -c -5) --file=$(conf_file) -- $(SVG_src) > $@
 
