@@ -51,39 +51,38 @@ class extention(inkex.Effect):
                 inkex.errormsg("File (%s) already exist, remove it first." % (self.options.file))
                 return
 
+            configFile = file(self.options.file, 'w')
+            configFile.write(
+                "# This is a ini style config file, where you define all layers that compose\n"
+                "# a page.\n#\n"
+                "# Like so:\n\n")
+
             config.add_section('page 1')
             layerStr=""
             for l in allLayers:
                 layerStr += l.attrib['{' + inkex.NSS["inkscape"] + '}label'] + ", " 
             config.set('page 1', "layers", layerStr[:-2])
 
-            configFile = file(self.options.file, 'w')
-            configFile.write(
-                "# This is a ini style config file, where you define all layers that compose\n"
-                "# a page.\n#\n"
-                "# Like so:\n\n")
             config.write(configFile)
 
-        else:
+        elif self.options.tab == "show":
             config.read(self.options.file)
 
-            if self.options.tab == "exportAll":
-                inkex.errormsg("export all pages is not yet implemented.")
+            pageName = "page " + str(self.options.page)
+            if pageName not in config.sections():
+                inkex.errormsg("No such section (%s), in %s" % (pageName, self.options.file))
+                return
 
-            elif self.options.tab == "show":
-                pageName = "page " + str(self.options.page)
-                if pageName not in config.sections():
-                    inkex.errormsg("No such section (%s), in %s" % (pageName, self.options.file))
-                    return
-
-                visibleLayers = map(str.strip, config.get(pageName, "Layers").split(","))
-                for l in allLayers:
-                    # Switch on the visibitity of layers specified in the config file
-                    if l.attrib['{' + inkex.NSS["inkscape"] + '}label'] in visibleLayers:
-                        l.set("style", "display:inline")
-                    else:
-                        # Turn off the visibility of all other layers
-                        l.set("style", "display:none")
+            visibleLayers = map(str.strip, config.get(pageName, "Layers").split(","))
+            for l in allLayers:
+                # Switch on the visibitity of layers specified in the config file
+                if l.attrib['{' + inkex.NSS["inkscape"] + '}label'] in visibleLayers:
+                    l.set("style", "display:inline")
+                else:
+                    # Turn off the visibility of all other layers
+                    l.set("style", "display:none")
+        else:
+            inkex.errormsg("Unknown tab \"%s\"" % self.options.tab)
 
 
 
