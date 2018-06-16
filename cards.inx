@@ -19,14 +19,14 @@
             <_param name="doc" type="description">Generate config file skeleton.</_param>
         </page>
         <page name="help" _gui-text="Help">
-		<_param name="doc" type="description">The extension does not export by default, it should eventually do if apply is clicked while on "Export all pages" tab. The tabs are a sort of submenu. If you click on apply only the tab shown is considered. You can access more information on how to select layers per page in the generated config skeleton.</_param>
+		<_param name="doc" type="description">The tabs are a sort of submenu. If you click on apply only the tab shown is considered, hence if you do click now, nothing will be changed. You can access more information on how to select layers per page in the generated config skeleton.</_param>
         </page>
     </param>
 
     <effect needs-live-preview="false">
         <object-type>all</object-type>
         <effects-menu>
-            <submenu _name="Export"/>
+            <submenu _name="Boardgames"/>
         </effects-menu>
     </effect>
     <script>
