@@ -11,7 +11,8 @@ conf_file=inkcards.conf
 # Define vars from the config
 cards:=$(shell seq 1 $(nb_cards))
 page_layout:=$(nb_cards_w)x$(nb_cards_h)
-SVGs:=$(patsubst %, %.svg, $(cards))
+Front_SVGs:=$(patsubst %, %.front.svg, $(cards))
+Rear_SVGs:=$(patsubst %, %.rear.svg, $(cards))
 
 # Generate a sequence of pages
 cards_per_page:=$(shell echo $$(($(nb_cards_w)*$(nb_cards_h))))
@@ -28,13 +29,14 @@ pages:=$(shell seq 1 $(nb_pages))
 
 ALL: $(dest)
 
-$(dest): $(SVGs)
-	montage $^ -tile $(page_layout) -geometry $(DPI) $@
+$(dest): $(Front_SVGs) $(Rear_SVGs)
+	montage $(sort $^) -tile $(page_layout) -geometry $(DPI) $@
 
-$(SVG_src): ;
+%.front.svg: $(SVG_src)
+	python2 ~/dev/inkcards/cards.py --tab=show --card=$(shell echo $@ | head -c -11) --side=front --file=$(conf_file) -- $(SVG_src) > $@
 
-%.svg: $(SVG_src)
-	python2 ~/dev/inkcards/cards.py --tab=show --page=$(shell echo $@ | head -c -5) --file=$(conf_file) -- $(SVG_src) > $@
+%.rear.svg: $(SVG_src)
+	python2 ~/dev/inkcards/cards.py --tab=show --card=$(shell echo $@ | head -c -10) --side=rear --file=$(conf_file) -- $(SVG_src) > $@
 
 clean:
-	$(RM) $(dest) $(PDF_pages) $(SVG_pages) $(SVGs)
+	$(RM) $(dest) $(PDF_pages) $(SVG_pages) $(Front_SVGs) $(Rear_SVGs)

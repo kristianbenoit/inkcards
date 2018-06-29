@@ -34,11 +34,15 @@ class extention(inkex.Effect):
         self.OptionParser.add_option('--file',
                                      action='store',
                                      type='string', dest='file', default='/tmp/inkcards.conf',
-                                     help='Where to read the layers configured per page.')
-        self.OptionParser.add_option('--pageNo',
+                                     help='Where to read the layers configured per card.')
+        self.OptionParser.add_option('--cardNo',
                                      action='store',
-                                     type='int', dest='page', default=0,
-                                     help='The page number to activate the layers, hide the others.')
+                                     type='int', dest='cardNo', default=0,
+                                     help='The card number to activate the layers, hide the others.')
+        self.OptionParser.add_option('--side',
+                                     action='store',
+                                     type='string', dest='side', default='front', # 1 is front and 2 is rear
+                                     help='side of the card (front/rear)')
         self.getoptions()
 
     def effect(self):
@@ -54,26 +58,28 @@ class extention(inkex.Effect):
             configFile = file(self.options.file, 'w')
             configFile.write(
                 "# This is a ini style config file, where you define all layers that compose\n"
-                "# a page.\n#\n"
+                "# a card (by sides).\n#\n"
                 "# Like so:\n\n")
 
-            config.add_section('page 1')
+            config.add_section('card 1')
             layerStr=""
             for l in allLayers:
                 layerStr += l.attrib['{' + inkex.NSS["inkscape"] + '}label'] + ", " 
-            config.set('page 1', "layers", layerStr[:-2])
+
+            config.set('card 1', "front", layerStr[:-2])
+            config.set('card 1', "rear", layerStr[:-2])
 
             config.write(configFile)
 
         elif self.options.tab == "show":
             config.read(self.options.file)
 
-            pageName = "page " + str(self.options.page)
-            if pageName not in config.sections():
-                inkex.errormsg("No such section (%s), in %s" % (pageName, self.options.file))
+            cardName = "card " + str(self.options.cardNo)
+            if cardName not in config.sections():
+                inkex.errormsg("No such section (%s), in %s" % (cardName, self.options.file))
                 return
 
-            visibleLayers = map(str.strip, config.get(pageName, "Layers").split(","))
+            visibleLayers = map(str.strip, config.get(cardName, self.options.side).split(","))
             for l in allLayers:
                 # Switch on the visibitity of layers specified in the config file
                 if l.attrib['{' + inkex.NSS["inkscape"] + '}label'] in visibleLayers:
@@ -82,9 +88,8 @@ class extention(inkex.Effect):
                     # Turn off the visibility of all other layers
                     l.set("style", "display:none")
         else:
+            inkex.errormsg(str(os.environ["PWD"]))
             inkex.errormsg("Unknown tab \"%s\"" % self.options.tab)
-
-
 
 if __name__ == "__main__":
     e = extention()
