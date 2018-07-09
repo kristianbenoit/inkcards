@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 import sys
 import os
 from shutil import copyfile
-import ConfigParser
+from ConfigParser import ConfigParser
 
 sys.path.append('/usr/share/inkscape/extensions')
 import inkex
@@ -46,7 +46,7 @@ class extention(inkex.Effect):
         self.getoptions()
 
     def effect(self):
-        config = ConfigParser.ConfigParser()
+        config = ConfigParser()
         allLayers = self.document.xpath("//svg:g[@inkscape:groupmode='layer']", namespaces=inkex.NSS)
         self.options.tab = self.options.tab.strip('"')
 
@@ -58,28 +58,36 @@ class extention(inkex.Effect):
             configFile = file(self.options.file, 'w')
             configFile.write(
                 "# This is a ini style config file, where you define all layers that compose\n"
-                "# a card (by sides).\n#\n"
+                "# a card (by sides).\n"
+                "#\n"
                 "# Like so:\n\n")
 
-            config.add_section('card 1')
-            layerStr=""
-            for l in allLayers:
-                layerStr += l.attrib['{' + inkex.NSS["inkscape"] + '}label'] + ", " 
+            config.set(None, "DPI", 600)
+            config.set(None, "page_layout", [2,3])
+            config.set(None, "SVG_src","testcards.svg")
+            config.set(None, "dest","testcards.pdf")
 
-            config.set('card 1', "front", layerStr[:-2])
-            config.set('card 1', "rear", layerStr[:-2])
+            config.add_section('card 1')
+            layers=[]
+            for l in allLayers:
+                layers.append(l.attrib['{' + inkex.NSS["inkscape"] + '}label'])
+
+            config.set("card 1", "front", layers)
+            config.set("card 1", "rear", layers)
 
             config.write(configFile)
 
         elif self.options.tab == "show":
             config.read(self.options.file)
-
             cardName = "card " + str(self.options.cardNo)
             if cardName not in config.sections():
                 inkex.errormsg("No such section (%s), in %s" % (cardName, self.options.file))
+                inkex.errormsg("PWD is %s" % (os.getcwd()))
                 return
 
-            visibleLayers = map(str.strip, config.get(cardName, self.options.side).split(","))
+            visibleLayers = config.get(cardName, self.options.side)
+            visibleLayers = eval(visibleLayers)
+
             for l in allLayers:
                 # Switch on the visibitity of layers specified in the config file
                 if l.attrib['{' + inkex.NSS["inkscape"] + '}label'] in visibleLayers:

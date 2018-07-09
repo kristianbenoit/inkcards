@@ -1,0 +1,25 @@
+import os
+from ConfigParser import ConfigParser
+
+env = Environment(tools = ['Inkcards', 'Tiling'])
+confFile = File('inkcards.conf')
+config = ConfigParser()
+print(config.read(os.path.join('src', 'inkcards.conf')))
+print(os.getcwd())
+print(os.path.join('src', 'inkcards.conf'))
+conf = config.defaults()
+print(conf)
+
+cards=[]
+for idx, c in enumerate(config.sections(), 1):
+    card = {}
+    card['front'] = env.Inkcards('%s.front.svg'%c, [File(conf['svg_src']), confFile], CARD_NB=idx, CARD_SIDE='front')
+    card['rear'] = env.Inkcards('%s.rear.svg'%c, [File(conf['svg_src']), confFile], CARD_NB=idx, CARD_SIDE='rear')
+    cards.append(card)
+
+#front = [card['front'] for card in cards]
+#front = env.Tiling("front."+conf['dest'], front + [confFile], PAGE_LAYOUT=conf['page_layout'], DPI=conf['dpi'])
+
+#rear = [card['rear'] for card in cards]
+#rear = env.Tiling("rear."+conf['dest'], rear + [confFile], PAGE_LAYOUT=conf['page_layout'], DPI=conf['dpi'])
+
