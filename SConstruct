@@ -1,2 +1,2 @@
-VariantDir('build', 'src') #, duplicate=0)
+VariantDir('build', 'src', duplicate=1)
 SConscript('build/SConscript')
