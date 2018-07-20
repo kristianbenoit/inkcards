@@ -1,16 +1,43 @@
-This is an inkscape extension to handle using some layers in multiple pages, mostly
-useful with cards. To install, the files named cards.inx and cards.py need to
-be in the inkscape extension dir (on Ubuntu: /usr/share/inkscape/extension).
-The extension should then (upon restart) be available in the menu
-extensions/export/cards...
+# Inkcards
 
-A Makefile is also available to generate a pdf with all the pages. To use it,
-you first need to install "librsvg2-bin" and to set the variable at the start
-of the file.
+Inkcards is an Inkscape extension to create a deck of cards from a single SVG.
+The required SVG size is the same as A card single card from the deck. By
+activating some layers, the card shows (in Inkscape) and by activating others,
+it show another card. The cards layers are described in inkcards.conf. Once all
+cards are drawn and you are ready to print them, I suggest to work with SCons
+to generate one SVG for each card you could then use countersheet or montage
+to tile the cards into a PDF.
 
-See https://boardgamegeek.com/thread/490643/making-cards-youll-never-use-your-old-method-again
-to know how to print on cards. If you print on both side of cardboard, you
-should draw it so that cards side match by folding on long edge.
+## Install
 
-The extension is hardcoded with Linux in mind and need changes to fit on
-Windows, perhaps OSx also.
+To install Inkcards, the files cards.ink andd cards.py should be copied into the
+Inkscape extension dir (on Ubuntu: ~/.config/inkscape/extensions). The extension
+should then (upon restart) be available in the menu
+extensions/Boardgames/cards...
+
+The rest of the files are a template (more than a template) to build the cards
+with SCons and thus should be used as part of your project.
+
+## Advantage
+
+Suppose you are creating a medieval game, where you have some type of cards
+like:
+
+- Ennemie
+- Spell
+- Tresure
+
+You can then create a layer for the deck, one per card type and one per card.
+Modifying a single layer would then affect all cards that uses it.
+
+## How to create :flower_playing_cards: :spades: :hearts: :clubs: :diamonds:
+
+See how to print cards on [BoardGameGeek](https://boardgamegeek.com/thread/490643/making-cards-youll-never-use-your-old-method-again).
+The CountersheetExtension should be used to tile the cards so you create a
+printable file. I thought and tryed of using image magick montage, but I
+finally looked more into Countersheet and it seams to have the same purpose and
+is able to load external SVG file like is generated with Inkcards.
+
+We could learn with countersheet how to edit the text in a card and add a
+configuration option to have the text modified. So we could set the text for a
+card in the config file.
