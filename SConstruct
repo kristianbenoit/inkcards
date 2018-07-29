@@ -6,10 +6,10 @@ env = Environment(tools = ['Inkcards', 'Tiling'])
 InkcardsSetup(env)
 
 cards=[]
-for idx, cardName in enumerate(env['INKCARDS'], 1):
+for cardName in env['INKCARDS']:
     card = {}
-    card['front'] = env.Inkcards('%s-front'%cardName, env['svg_src'], CARD_NB=idx, CARD_SIDE='front')
-    card['rear'] = env.Inkcards('%s-rear'%cardName, env['svg_src'], CARD_NB=idx, CARD_SIDE='rear')
+    card['front'] = env.Inkcards('%s-front'%cardName, env['svg_src'], CARD_NAME=cardName, CARD_SIDE='front')
+    card['rear'] = env.Inkcards('%s-rear'%cardName, env['svg_src'], CARD_NAME=cardName, CARD_SIDE='rear')
     cards.append(card)
 
 ##########################

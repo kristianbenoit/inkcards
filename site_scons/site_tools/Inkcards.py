@@ -7,7 +7,7 @@ def _inkcards_add_conf(target, source, env):
     return target, source
 
 _inkcards = SCons.Builder.Builder(
-    action = "./cards.py --tab=show --card=$CARD_NB --side=$CARD_SIDE --file=$INKCARDSCONF --svgout=$TARGET -- $SOURCE",
+    action = "./cards.py --tab=show --card=\"$CARD_NAME\" --$CARD_SIDE --conf=$INKCARDSCONF --saveFile -- $SOURCE",
     suffix = '.svg',
     src_suffix = '.svg',
     emitter = _inkcards_add_conf)
