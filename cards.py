@@ -56,13 +56,13 @@ class extension(inkex.Effect):
                                      help='show side rear')
         self.OptionParser.add_option('-w', '--saveFile',
                                      action='store_true',
-                                     dest='fileSave', default=False,
+                                     dest='saveFile', default=False,
                                      help='A sub argument of --tab=show. Save the card into "<card name>-<side>.svg".')
         self.getoptions()
         self.outfile=sys.stdout
 
     def output(self):
-        """Serialize document into XML on stdout or outfile if the fileSave option was passed. This override inkex.Effect output method"""
+        """Serialize document into XML on stdout or outfile if the saveFile option was passed. This override inkex.Effect output method"""
         original = etree.tostring(self.original_document)
         result = etree.tostring(self.document)
         self.document.write(self.outfile)
@@ -104,6 +104,7 @@ class extension(inkex.Effect):
             if cardName not in config.sections():
                 errormsg(_("No such section (%s), in %s") % (cardName, os.path.join(os.getcwd(), self.options.file)))
                 return
+
             side = 'front' if self.options.showFront else 'rear'
         else:
             found = False
@@ -120,7 +121,7 @@ class extension(inkex.Effect):
                 errormsg(_("Layer %s (the current layer) is not found in any cards. Please select a layer that is defined and (ideally) unique to the card/side you want to show.") % (currentLayerName))
                 return
 
-        if self.options.fileSave:
+        if self.options.saveFile:
             self.outfile = file(cardName + '-' + side + '.svg', 'w')
 
         visibleLayers = config.get(cardName, side)
@@ -150,5 +151,5 @@ if __name__ == "__main__":
     e = extension()
     e.affect()
     # Return the error only if not called from inkscape as inkex do not seem to report errors?
-    if e.options.fileSave:
+    if e.options.saveFile:
         sys.exit(error)
