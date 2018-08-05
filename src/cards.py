@@ -28,9 +28,9 @@ import inkex
 from lxml import etree
 
 # Set the error to true if called then pass it back to inkex.
-error = 0
-def errormsg(msg):
-    error=1
+errorCode = 0
+def errormsg(msg, error=0):
+    errorCode = error
     inkex.errormsg(msg)
 
 class Card(inkex.Effect, object):
@@ -69,7 +69,12 @@ class Card(inkex.Effect, object):
 
         self.getoptions()
         self.confFile = os.path.expanduser(self.options.file)
-        self.outfile=None
+        self.config = ConfigParser()
+        self.outfile = None
+
+    @property
+    def allLayers(self):
+        return self.document.xpath("//svg:g[@inkscape:groupmode='layer']", namespaces=inkex.NSS)
 
     def output(self):
         """Serialize document into XML on stdout or in a file named <card-name>-<card-side>.svg if not running as an inkscape extension. This override inkex.Effect.output method."""
@@ -78,10 +83,10 @@ class Card(inkex.Effect, object):
         else:
             super(Card, self).output()
 
-    def _write_conf(self, config, allLayers):
+    def _write_conf(self):
         """Write a sample conf file with all layers in a single card."""
         if os.path.isfile(self.confFile):
-            errormsg(_("File (%s) already exist, remove it first.") % (self.options.file))
+            errormsg(_("File (%s) already exist, remove it first.") % (self.options.file), 1)
             return
 
         configFile = file(self.confFile, 'w')
@@ -91,59 +96,59 @@ class Card(inkex.Effect, object):
             "#\n"
             "# Like so:\n\n"))
 
-        #config.set(None, "SVG_src","card_layers.svg")
-        #config.set(None, "dest","output.pdf")
+        #self.config.set(None, "SVG_src","card_layers.svg")
+        #self.config.set(None, "dest","output.pdf")
 
         layers=[]
-        for l in allLayers:
+        for l in self.allLayers:
             layers.append(l.attrib['{' + inkex.NSS["inkscape"] + '}label'])
 
-        config.add_section('card 1')
-        config.set("card 1", "front", layers)
-        config.set("card 1", "rear", layers)
+        self.config.add_section('card 1')
+        self.config.set("card 1", "front", layers)
+        self.config.set("card 1", "rear", layers)
 
-        config.write(configFile)
+        self.config.write(configFile)
 
-    def _create_card(self, config, allLayers):
+    def _create_card(self):
         """Activate only the layers for this card, described in inkcards.conf. To support being an inkscape extension, the cards are named: "card i", where i is a number."""
         if not os.path.isfile(self.confFile):
-            errormsg(_("File (%s) does not exist. You should generate the conf file first.") % (self.options.file))
+            errormsg(_("File (%s) does not exist. You should generate the conf file first.") % (self.options.file), 1)
             return
 
-        config.read(self.confFile)
+        self.config.read(self.confFile)
         self.getposinlayer()
         currentLayerName = self.current_layer.attrib['{' + inkex.NSS["inkscape"] + '}label']
 
         if self.options.cardName:
             cardName = self.options.cardName
-            if cardName not in config.sections():
-                errormsg(_("No such section (%s), in %s") % (cardName, self.confFile))
+            if cardName not in self.config.sections():
+                errormsg(_("No such section (%s), in %s") % (cardName, self.confFile), 1)
                 return
             side = 'front' if self.options.showFront else 'rear'
         else:
             if not self.options.extension:
-                errormsg(_("You should choose a cardname to create when you run the app outside inkscape. Choosing the card using the last layer selected within inkscape."))
+                errormsg(_("You should choose a cardname to create when you run the app outside inkscape. Creating the card using the last layer selected within inkscape, let's hope it's what you want."))
             found = False
-            for cardName in config.sections():
-                if currentLayerName in config.get(cardName, 'front'):
+            for cardName in self.config.sections():
+                if currentLayerName in self.config.get(cardName, 'front'):
                     side = 'front'
                     found = True
                     break
-                elif currentLayerName in config.get(cardName, 'rear'):
+                elif currentLayerName in self.config.get(cardName, 'rear'):
                     side = 'rear'
                     found = True
                     break
             if not found:
-                errormsg(_("Layer %s (the current layer) is not found in any cards. Please select a layer that is defined and (ideally) unique to the card/side you want to show.") % (currentLayerName))
+                errormsg(_("Layer %s (the current layer) is not found in any cards. Please select a layer that is defined and (ideally) unique to the card/side you want to show.") % (currentLayerName), 1)
                 return
 
         if not self.options.extension:
             self.outfile = file(cardName + '-' + side + '.svg', 'w')
 
-        visibleLayers = config.get(cardName, side)
+        visibleLayers = self.config.get(cardName, side)
         visibleLayers = eval(visibleLayers)
 
-        for l in allLayers:
+        for l in self.allLayers:
             # Switch on the visibitity of layers specified in the config file
             if l.attrib['{' + inkex.NSS["inkscape"] + '}label'] in visibleLayers:
                 l.set("style", "display:inline")
@@ -152,17 +157,14 @@ class Card(inkex.Effect, object):
                 l.set("style", "display:none")
 
     def effect(self):
-        config = ConfigParser()
-        allLayers = self.document.xpath("//svg:g[@inkscape:groupmode='layer']", namespaces=inkex.NSS)
-
         if self.options.genconf:
-            self._write_conf(config, allLayers)
+            self._write_conf()
         else:
-            self._create_card(config, allLayers)
+            self._create_card()
 
 if __name__ == "__main__":
     card = Card()
     card.affect()
     # Return the error only if not called from inkscape as inkex is not expected to report errors.
     if not card.options.extension:
-        sys.exit(error)
+        sys.exit(errorCode)
