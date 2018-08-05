@@ -10,7 +10,7 @@
            _gui-text="Config file"
            _gui-description="File containing a description of which layer is in each card.">~/Documents/inkcards.conf</param>
 
-   <param name="__genconf"
+   <param name="gen-conf"
 	  type="boolean"
 	  gui-text="Generate a config file"
 	  _gui-description="Generate a config file with a single card with all layers. Useful to copy/paste them."></param>

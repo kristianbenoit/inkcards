@@ -23,6 +23,7 @@ from shutil import copyfile
 from ConfigParser import ConfigParser
 
 sys.path.append('/usr/share/inkscape/extensions')
+# TODO: If running on windows append inkscape extensions path.
 import inkex
 from lxml import etree
 
@@ -38,18 +39,13 @@ class Card(inkex.Effect, object):
         inkex.Effect.__init__(self)
         self.OptionParser.add_option('--extension',
                                      action='store',
-                                     type='inkbool', dest='extension', default='false',
-                                     help="'true' if run as an extension from inkscape")
+                                     type='inkbool', dest='extension', default=False,
+                                     help="'True' if run as an extension from inkscape")
 
         self.OptionParser.add_option('--gen-conf',
-                                     action='store_true',
-                                     dest='genconf', default=False,
-                                     help='Generate a config file with a single card with all layers. Useful to copy/paste them.')
-
-        self.OptionParser.add_option('--__genconf',
                                      action='store',
-                                     type='inkbool', dest='__genconf', default='false',
-                                     help='Same as --gen-conf, but for inkscape specific use. (not a flag)')
+                                     type='inkbool', dest='genconf', default=False,
+                                     help='Generate a config file with a single card with all layers. Useful to copy/paste them.')
 
         self.OptionParser.add_option('--conf',
                                      action='store',
