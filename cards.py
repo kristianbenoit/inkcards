@@ -32,56 +32,71 @@ def errormsg(msg):
     error=1
     inkex.errormsg(msg)
 
-class extension(inkex.Effect):
+class Card(inkex.Effect, object):
+    __metaclass__ = type
     def __init__(self):
         inkex.Effect.__init__(self)
-        self.OptionParser.add_option('--tab',
+        self.OptionParser.add_option('--extension',
                                      action='store',
-                                     type='string', dest='tab')
+                                     type='inkbool', dest='extension', default='false',
+                                     help="'true' if run as an extension from inkscape")
+
+        self.OptionParser.add_option('--gen-conf',
+                                     action='store_true',
+                                     dest='genconf', default=False,
+                                     help='Generate a config file with a single card with all layers. Useful to copy/paste them.')
+
+        self.OptionParser.add_option('--__genconf',
+                                     action='store',
+                                     type='inkbool', dest='__genconf', default='false',
+                                     help='Same as --gen-conf, but for inkscape specific use. (not a flag)')
+
         self.OptionParser.add_option('--conf',
                                      action='store',
                                      type='string', dest='file', default='~/Documents/inkcards.conf',
-                                     help='Where to read the layers configured per card.')
+                                     help="Where to read the layers configured per card. If --gen-conf is passed, that's the file the config will be written to.")
+
         self.OptionParser.add_option('--card',
                                      action='store',
                                      type='string', dest='cardName', default=None,
                                      help='The card name from which you want to activate the layers, hide all other layers.')
+
         self.OptionParser.add_option('-f', '--front',
                                      action='store_true',
                                      dest='showFront', default=True,
                                      help='show side front')
+
         self.OptionParser.add_option('-r', '--rear',
                                      action='store_false',
                                      dest='showFront',
                                      help='show side rear')
-        self.OptionParser.add_option('-w', '--saveFile',
-                                     action='store_true',
-                                     dest='saveFile', default=False,
-                                     help='A sub argument of --tab=show. Save the card into "<card name>-<side>.svg".')
+
         self.getoptions()
-        self.outfile=sys.stdout
+        self.confFile = os.path.expanduser(self.options.file)
+        self.outfile=None
 
     def output(self):
-        """Serialize document into XML on stdout or outfile if the saveFile option was passed. This override inkex.Effect output method"""
-        original = etree.tostring(self.original_document)
-        result = etree.tostring(self.document)
-        self.document.write(self.outfile)
+        """Serialize document into XML on stdout or in a file named <card-name>-<card-side>.svg if not running as an inkscape extension. This override inkex.Effect.output method."""
+        if (self.outfile):
+            self.document.write(self.outfile)
+        else:
+            super(Card, self).output()
 
-    def __write_conf(self, config, allLayers):
+    def _write_conf(self, config, allLayers):
         """Write a sample conf file with all layers in a single card."""
-        if os.path.isfile(self.options.file):
+        if os.path.isfile(self.confFile):
             errormsg(_("File (%s) already exist, remove it first.") % (self.options.file))
             return
 
-        configFile = file(os.path.expanduser(self.options.file), 'w')
+        configFile = file(self.confFile, 'w')
         configFile.write(_(
             "# This is a ini style config file, where you define all layers that compose\n"
             "# a card (by side).\n"
             "#\n"
             "# Like so:\n\n"))
 
-        config.set(None, "SVG_src","card_layers.svg")
-        config.set(None, "dest","output.pdf")
+        #config.set(None, "SVG_src","card_layers.svg")
+        #config.set(None, "dest","output.pdf")
 
         layers=[]
         for l in allLayers:
@@ -93,20 +108,25 @@ class extension(inkex.Effect):
 
         config.write(configFile)
 
-    def __create_card(self, config, allLayers):
+    def _create_card(self, config, allLayers):
         """Activate only the layers for this card, described in inkcards.conf. To support being an inkscape extension, the cards are named: "card i", where i is a number."""
-        config.read(os.path.expanduser(self.options.file))
+        if not os.path.isfile(self.confFile):
+            errormsg(_("File (%s) does not exist. You should generate the conf file first.") % (self.options.file))
+            return
+
+        config.read(self.confFile)
         self.getposinlayer()
         currentLayerName = self.current_layer.attrib['{' + inkex.NSS["inkscape"] + '}label']
 
         if self.options.cardName:
             cardName = self.options.cardName
             if cardName not in config.sections():
-                errormsg(_("No such section (%s), in %s") % (cardName, os.path.join(os.getcwd(), self.options.file)))
+                errormsg(_("No such section (%s), in %s") % (cardName, self.confFile))
                 return
-
             side = 'front' if self.options.showFront else 'rear'
         else:
+            if not self.options.extension:
+                errormsg(_("You should choose a cardname to create when you run the app outside inkscape. Choosing the card using the last layer selected within inkscape."))
             found = False
             for cardName in config.sections():
                 if currentLayerName in config.get(cardName, 'front'):
@@ -121,7 +141,7 @@ class extension(inkex.Effect):
                 errormsg(_("Layer %s (the current layer) is not found in any cards. Please select a layer that is defined and (ideally) unique to the card/side you want to show.") % (currentLayerName))
                 return
 
-        if self.options.saveFile:
+        if not self.options.extension:
             self.outfile = file(cardName + '-' + side + '.svg', 'w')
 
         visibleLayers = config.get(cardName, side)
@@ -138,18 +158,15 @@ class extension(inkex.Effect):
     def effect(self):
         config = ConfigParser()
         allLayers = self.document.xpath("//svg:g[@inkscape:groupmode='layer']", namespaces=inkex.NSS)
-        self.options.tab = self.options.tab.strip('"')
 
-        if self.options.tab == 'conf':
-            self.__write_conf(config, allLayers)
-        elif self.options.tab == "show":
-            self.__create_card(config, allLayers)
+        if self.options.genconf:
+            self._write_conf(config, allLayers)
         else:
-            errormsg(_("Unknown tab \"%s\"") % self.options.tab)
+            self._create_card(config, allLayers)
 
 if __name__ == "__main__":
-    e = extension()
-    e.affect()
-    # Return the error only if not called from inkscape as inkex do not seem to report errors?
-    if e.options.saveFile:
+    card = Card()
+    card.affect()
+    # Return the error only if not called from inkscape as inkex is not expected to report errors.
+    if not card.options.extension:
         sys.exit(error)

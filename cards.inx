@@ -1,29 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
     <_name>Cards</_name>
-    <id>org.ekips.filter.cards</id>
+    <id>com.boardgame.cards</id>
     <dependency type="executable" location="extensions">cards.py</dependency>
     <dependency type="executable" location="extensions">inkex.py</dependency>
-    <_param name="introduction" type="description">
-        This extension let you use the same SVG for multiple cards so you can reuse some layers.
-    </_param>
-    <_param name="introduction" type="description"></_param>
 
-    <param name="file" type="string" _gui-text="Config file" _gui-description="File containing a description of which layer is in each card.">~/Documents/inkcards.conf</param>
+    <param name="conf"
+           type="string"
+           _gui-text="Config file"
+           _gui-description="File containing a description of which layer is in each card.">~/Documents/inkcards.conf</param>
 
-    <param name="tab" type="notebook">
-        <page name="show" _gui-text="Show card">
-		<_param name="doc" type="description">Show the first card configured to have the currently selected layer part of it's layers list in the config file.</_param>
-        </page>
-        <page name="conf" _gui-text="Generate config">
-            <_param name="doc" type="description">Generate dumb config file skeleton with a single card named "card 1" and all layers on both sides.</_param>
-        </page>
+   <param name="__genconf"
+	  type="boolean"
+	  gui-text="Generate a config file"
+	  _gui-description="Generate a config file with a single card with all layers. Useful to copy/paste them."></param>
+
+    <param name="extension" type="boolean" gui-hidden="true">true</param>
+
+    <param name="doc" type="description"><!-- xml:space="preserve"> -->
+        This extension let you use the same SVG to create multiple cards.
+        Applying it show the first card configured to use the current layer. Use (Shift+Ctrl+L) within Inkscape to show the layer selection dialog.
     </param>
 
     <effect needs-live-preview="false">
         <object-type>all</object-type>
         <effects-menu>
-            <submenu _name="Boardgames"/>
+            <submenu _name="Boardgames">
+                <submenu _name="inkcards"/>
+            </submenu>
         </effects-menu>
     </effect>
     <script>
