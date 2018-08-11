@@ -37,35 +37,38 @@ class Card(inkex.Effect, object):
     __metaclass__ = type
     def __init__(self):
         inkex.Effect.__init__(self)
-        self.OptionParser.add_option('--extension',
-                                     action='store',
-                                     type='inkbool', dest='extension', default=False,
-                                     help="'True' if run as an extension from inkscape")
+        self.OptionParser.add_option(
+            '--extension', type='inkbool', default=False,
+            action='store', dest='extension',
+            help="'True' if run as an extension from inkscape")
 
-        self.OptionParser.add_option('--gen-conf',
-                                     action='store',
-                                     type='inkbool', dest='genconf', default=False,
-                                     help='Generate a config file with a single card with all layers. Useful to copy/paste them.')
+        self.OptionParser.add_option(
+            '--gen-conf', type='inkbool', default=False,
+            action='store', dest='genconf',
+            help='Generate a config file with a single card with all layers. '\
+                 'Useful to copy/paste them.')
 
-        self.OptionParser.add_option('--conf',
-                                     action='store',
-                                     type='string', dest='file', default='~/Documents/inkcards.conf',
-                                     help="Where to read the layers configured per card. If --gen-conf is passed, that's the file the config will be written to.")
+        self.OptionParser.add_option(
+            '--conf', type='string', default='~/Documents/inkcards.conf',
+            action='store', dest='file',
+            help="Where to read the layers configured per card. If --gen-conf "\
+                 "is passed, that's the file the config will be written to.")
 
-        self.OptionParser.add_option('--card',
-                                     action='store',
-                                     type='string', dest='cardName', default=None,
-                                     help='The card name from which you want to activate the layers, hide all other layers.')
+        self.OptionParser.add_option(
+            '--card', type='string', default=None,
+            action='store', dest='cardName',
+            help='The card name from which you want to activate the layers, '\
+                 'hide all other layers.')
 
-        self.OptionParser.add_option('-f', '--front',
-                                     action='store_true',
-                                     dest='showFront', default=True,
-                                     help='show side front')
+        self.OptionParser.add_option(
+            '-f', '--front', default=True,
+            action='store_true', dest='showFront',
+            help='show side front')
 
-        self.OptionParser.add_option('-r', '--rear',
-                                     action='store_false',
-                                     dest='showFront',
-                                     help='show side rear')
+        self.OptionParser.add_option(
+            '-r', '--rear',
+            action='store_false', dest='showFront',
+            help='show side rear')
 
         self.getoptions()
         self.confFile = os.path.expanduser(self.options.file)
