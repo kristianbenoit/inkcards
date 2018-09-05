@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with VIM and a bit of Inkscape (http://www.inkscape.org/) -->
+<!--
+   viewbox="0 0 215.9 279.4"
+   viewBox="0 0 8.5 11"
+   viewbox="0 0 17 22"
+   viewbox="0 0 2.5 3.5"
+   -->
+<svg
+   width="8.5in"
+   height="11in"
+   viewbox="0 0 17 22"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape">
+
+  <defs>
+    <symbol id="card">
+      <rect id="poker-card" x="-1.25" y="-1.75" width="2.5" height="3.5" fill="none" rx="0.25" ry="0.25" style="stroke:#000000;stroke-width:0.25;stroke-opacity:1"/>
+      <line x1="-1.25" y1="-1.75" x2="-1.25" y2="-2" style="stroke:#000000;stroke-width:0.01;stroke-opacity:1"/>
+      <line x1="1.25" y1="-1.75" x2="1.25" y2="-2" style="stroke:#000000;stroke-width:0.01;stroke-opacity:1"/>
+      <line x1="-1.25" y1="1.75" x2="-1.25" y2="2" style="stroke:#000000;stroke-width:0.01;stroke-opacity:1"/>
+      <line x1="1.25" y1="1.75" x2="1.25" y2="2" style="stroke:#000000;stroke-width:0.01;stroke-opacity:1"/>
+      <line x1="-1.25" y1="-1.75" x2="-1.5" y2="-1.75" style="stroke:#000000;stroke-width:0.01;stroke-opacity:1"/>
+      <line x1="1.25" y1="-1.75" x2="1.5" y2="-1.75" style="stroke:#000000;stroke-width:0.01;stroke-opacity:1"/>
+      <line x1="-1.25" y1="1.75" x2="-1.5" y2="1.75" style="stroke:#000000;stroke-width:0.01;stroke-opacity:1"/>
+      <line x1="1.25" y1="1.75" x2="1.5" y2="1.75" style="stroke:#000000;stroke-width:0.01;stroke-opacity:1"/>
+    </symbol>
+    <symbol>
+      <rect id="bridge-card" x="-1.125" y="-1.75" width="2.25" height="3.5" fill="none" rx="0.25" ry="0.25" style="stroke:#000000;stroke-width:0.25;stroke-opacity:1"/>
+      <line x1="-1.125" y1="-1.75" x2="-1.125" y2="-2" style="stroke:#000000;stroke-width:0.01;stroke-opacity:1"/>
+      <line x1="1.125" y1="-1.75" x2="1.125" y2="-2" style="stroke:#000000;stroke-width:0.01;stroke-opacity:1"/>
+      <line x1="-1.125" y1="1.75" x2="-1.125" y2="2" style="stroke:#000000;stroke-width:0.01;stroke-opacity:1"/>
+      <line x1="1.125" y1="1.75" x2="1.125" y2="2" style="stroke:#000000;stroke-width:0.01;stroke-opacity:1"/>
+      <line x1="-1.125" y1="-1.75" x2="-1.375" y2="-1.75" style="stroke:#000000;stroke-width:0.01;stroke-opacity:1"/>
+      <line x1="1.125" y1="-1.75" x2="1.375" y2="-1.75" style="stroke:#000000;stroke-width:0.01;stroke-opacity:1"/>
+      <line x1="-1.125" y1="1.75" x2="-1.375" y2="1.75" style="stroke:#000000;stroke-width:0.01;stroke-opacity:1"/>
+      <line x1="1.125" y1="1.75" x2="1.375" y2="1.75" style="stroke:#000000;stroke-width:0.01;stroke-opacity:1"/>
+    </symbol>
+    <symbol>
+      <rect id="visit-US-card" x="-1" y="-1.75" width="2" height="3.5" fill="none" rx="0.25" ry="0.25" style="stroke:#000000;stroke-width:0.25;stroke-opacity:1"/>
+      <line x1="-1" y1="-1.75" x2="-1" y2="-2" style="stroke:#000000;stroke-width:0.01;stroke-opacity:1"/>
+      <line x1="1" y1="-1.75" x2="1" y2="-2" style="stroke:#000000;stroke-width:0.01;stroke-opacity:1"/>
+      <line x1="-1" y1="1.75" x2="-1" y2="2" style="stroke:#000000;stroke-width:0.01;stroke-opacity:1"/>
+      <line x1="1" y1="1.75" x2="1" y2="2" style="stroke:#000000;stroke-width:0.01;stroke-opacity:1"/>
+      <line x1="-1" y1="-1.75" x2="-1.25" y2="-1.75" style="stroke:#000000;stroke-width:0.01;stroke-opacity:1"/>
+      <line x1="1" y1="-1.75" x2="1.25" y2="-1.75" style="stroke:#000000;stroke-width:0.01;stroke-opacity:1"/>
+      <line x1="-1" y1="1.75" x2="-1.25" y2="1.75" style="stroke:#000000;stroke-width:0.01;stroke-opacity:1"/>
+      <line x1="1" y1="1.75" x2="1.25" y2="1.75" style="stroke:#000000;stroke-width:0.01;stroke-opacity:1"/>
+    </symbol>
+  </defs>
+
+<svg>
+
+  <svg y='0%' height='33.3333333%'>
+    <svg x='0%' width='33.3333333%'>
+      <use xlink:href="#card" x='50%' y='50%'/>
+    </svg>
+    <svg x='33.3333333%' width='33.3333333%'>
+      <use xlink:href="#card" x='50%' y='50%'/>
+    </svg>
+    <svg x='66.6666667%' width='33.3333333%'>
+      <use xlink:href="#card" x='50%' y='50%'/>
+    </svg>
+  </svg>
+  <svg y='33.3333333%' height='33.3333333%'>
+    <svg x='0%' width='33.3333333%'>
+      <use xlink:href="#card" x='50%' y='50%'/>
+    </svg>
+    <svg x='33.3333333%' width='33.3333333%'>
+      <use xlink:href="#card" x='50%' y='50%'/>
+    </svg>
+    <svg x='66.6666667%' width='33.3333333%'>
+      <use xlink:href="#card" x='50%' y='50%'/>
+    </svg>
+  </svg>
+  <svg y='66.6666667%' height='33.3333333%'>
+    <svg x='0%' width='33.3333333%'>
+      <use xlink:href="#card" x='50%' y='50%'/>
+    </svg>
+    <svg x='33.3333333%' width='33.3333333%'>
+      <use xlink:href="#card" x='50%' y='50%'/>
+    </svg>
+    <svg x='66.6666667%' width='33.3333333%'>
+      <use xlink:href="#card" x='50%' y='50%'/>
+    </svg>
+  </svg>
+
+</svg>
+
+</svg>
