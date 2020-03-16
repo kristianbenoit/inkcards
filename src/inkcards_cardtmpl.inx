@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape">
+    <_name>Cards</_name>
+    <id>com.boardgame.inkcards.cardstmpl</id>
+    <dependency type="executable" location="extensions">inkcards_cardtmpl.py</dependency>
+    <dependency type="executable" location="extensions">inkex.py</dependency>
+    
+    <param name="doc" type="description">Generate a sheet the size of a card. This is part of inkcards.</param>
+
+    <param name="extension" type="boolean" gui-hidden="true">true</param>
+
+    <param name="cardformat" type="enum" gui-text="Card format">
+        <item value="['2.25in', '3.5in']">🃟 Bridge (2.25" x 3.5")</item>
+        <item value="['2.5in', '3.5in']">🃟 Poker (2.5" x 3.5")</item>
+        <item value="['2.75in', '4.75in']">🃟 Tarot (2.75" x 4.75")</item>
+        <item value="['2.5in', '2.5in']">▢ Square 2.5" </item>
+        <item value="['2.75in', '2.75in']">▢ Square 2.75"</item>
+        <item value="['3in', '3in']">▢ Square 3"</item>
+        <item value="['3.5in', '3.5in']">▢ Square 3.5"</item>
+        <item value="['3.5in', '5in']">🃟 Double Poker (3.5" x 5")</item>
+        <item value="['2in', '3in']">🃟 Standard Small (2" x 3")</item>
+        <item value="['2in', '3.5in']">🃟 Business (2" x 3.5")</item>
+        <item value="['1.25in', '1.75in']">🂠 Micro (1.25" x 1.75")</item>
+        <item value="['1.61in', '2.48in']">🂠 Mini US (1.61" x 2.48")</item>
+        <item value="['44mm', '67mm']">🂠 Mini EU (44mm x 67mm)</item>
+        <item value="['1.75in', '2.5in']">🂠 Mini (1.75" x 2.5")</item>
+        <item value="['1.75in', '3.5in']">🂠 Domino (1.75" x 3.5")</item>
+        <item value="['62mm', '100mm']">🂠 Trump (62mm x 100mm)</item>
+        <item value="['3in', '4.5in']">🂠 Index Small (3" x 4.5")</item>
+        <item value="['3in', '5in']">🂠 Index Regular (3" x 5")</item>
+    </param>
+
+    <param name="rotate" type="boolean" gui-text="Rotate landscape?"/>
+
+    <effect needs-live-preview="false">
+        <object-type>all</object-type>
+        <effects-menu hidden="true" />
+    </effect>
+    <inkscape:_templateinfo>
+      <inkscape:_name>🃟 Cards...</inkscape:_name>
+      <inkscape:author>Kristian Benoit</inkscape:author>
+      <inkscape:_shortdesc>Create a "card sized" sheet. Used to create a deck of card by reusing layers. See how inkcards work to generate a PDF of your tiled cards to print them.</inkscape:_shortdesc>
+      <inkscape:date>2019-08-25</inkscape:date>
+      <inkscape:_keywords>card boardgame</inkscape:_keywords>
+    </inkscape:_templateinfo>
+    <script>
+	<command reldir="extensions" interpreter="python">inkcards_cardtmpl.py</command>
+    </script>
+</inkscape-extension>

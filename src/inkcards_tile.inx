@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape">
+    <_name>🀞 Tile</_name>
+    <id>com.boardgame.inkcards.tile</id>
+    <dependency type="executable" location="extensions">inkcards_tile.py</dependency>
+    <dependency type="executable" location="extensions">inkex.py</dependency>
+    
+    <param name="extension" type="boolean" gui-hidden="true">true</param>
+    <param name="function" type="notebook">
+        <page name="opts" _gui-text="Options">
+            <param name="file" type="string" _gui-text="Cards file">/path/to/file/containing/cards.svg</param>
+            <param name="deckname" type="string" _gui-text="Deck name">Hearts, Diamonds, Spades, Clubs</param>
+            <param name="orientation" type="enum" _gui-text="Card orientation">
+                <_item value="0">No change</_item>
+                <_item value="90">Rotate 90°</_item>
+                <_item value="180">Rotate 180°</_item>
+                <_item value="-90">Rotate -90°</_item>
+            </param>
+            <param name="tilestyle" type="enum" _gui-text="Tiling style">
+                <_item value="plain">Single sided cards</_item>
+                <_item value="book1p">Book 1 page (folded)</_item>
+                <_item value="book2p">Book 2 pages</_item>
+            </param>
+            <param name="vert-brd" type="int" min="0" max="200" _gui-text="Vertical page margins (L/R) size (mm)"/>
+            <param name="horiz-brd" type="int" min="0" max="200" _gui-text="Horizontal page margins (T/B) size (mm)"/>
+            <param name="cardspacingsize" type="int" min="0" max="200" _gui-text="Minimal card spacing size (mm)"/>
+        </page>
+        <page name="doc" _gui-text="Documentation">
+            <_param name="doc" type="description">
+                This is an extension to tile the cards from an inkcards deck into a new
+                svg document. Useful to print real cards. The extension is inspired by the
+                thread "making cards you'll never use your old method again" on BGG forum.
+            </_param>
+            <_param name="doc" type="description">
+                ▶ Cards file
+            </_param>
+            <_param name="doc" type="description">
+                The path of an SVG file containing decks of cards created with the
+                inkcards deck extension.
+            </_param>
+            <_param name="doc" type="description">
+                ▶ Deck name
+            </_param>
+            <_param name="doc" type="description">
+                The name of the deck containing the cards to tile. It can be a list of
+                decks separated by commas.
+            </_param>
+            <_param name="doc" type="description">
+                ▶ Tiling style
+            </_param>
+            <_param name="doc" type="description">
+                Set the layout of the cards.
+            </_param>
+            <_param name="doc" type="description">
+                —▶ Single sided cards
+            </_param>
+            <_param name="doc" type="description">
+                Simply tile cards from the deck's named in the given SVG file. (No rear)
+            </_param>
+            <_param name="doc" type="description">
+                —▶ Book 1 page (folded)
+            </_param>
+            <_param name="doc" type="description">
+                Tile cards from the deck's named, on half a page. On the other half, tile
+                their rear. Match the front and rear sides of the cards using a fold line.
+            </_param>
+            <_param name="doc" type="description">
+                —▶ Book 2 pages
+            </_param>
+            <_param name="doc" type="description">
+                Tile cards from the deck's named, on evey Odd pages. Tile their rear on even
+                pages. Match the front and rear sides of the cards using light.
+            </_param>
+        </page>
+    </param>
+
+    <effect needs-live-preview="false">
+        <object-type>all</object-type>
+        <effects-menu>
+            <submenu name="🃟 Inkcards"/>
+        </effects-menu>
+    </effect>
+    <script>
+        <command reldir="extensions" interpreter="python">inkcards_tile.py</command>
+    </script>
+</inkscape-extension>
