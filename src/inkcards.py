@@ -41,9 +41,9 @@ def registerNS(nsmap):
     class makeSomeChanges(inkex.effect):
         using_namespaces={"someNamespace": "http://domain.com/someNamespce"}"""
     for nsK, NS in nsmap.items():
-        inkex.utils.NSS[nsK] = NS
+        inkex.NSS[nsK] = NS
         etree.register_namespace(nsK, NS)
-    inkex.utils.SSN = dict((b, a) for (a, b) in inkex.utils.NSS.items())
+    #inkex.SSN = dict((b, a) for (a, b) in inkex.NSS.items())
 
 
 class inkcardsError(Exception):
