@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#! /usr/bin/python3
 # vim: set fileencoding=utf-8
 '''
 Copyright (C) 2018 Kristian Benoit, kristian.benoit@gmail.com
@@ -17,15 +17,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 '''
-import sys
-import re
-import copy
+
+from inkcards import *
 import math
 from enum import Enum, unique
-
-sys.path.append('/usr/share/inkscape/extensions')
-import inkex
-from inkex import etree, debug, NSS, addNS
 
 icNS="http://boardgamegeek.com/inkscape/extension/inkcards"
 
@@ -35,13 +30,6 @@ class Layout(Enum):
     book1P = 1
     book2P = 2
 
-class inkcardsError(Exception):
-    def __init__(self, msg):
-        super(inkcardsError, self).__init__(msg)
-
-    def reportToInkex(self):
-        inkex.errormsg(self.message)
-
 class struct(dict):
     """dot.notation access to dictionary attributes"""
     __getattr__ = dict.get
@@ -49,64 +37,57 @@ class struct(dict):
     __delattr__ = dict.__delitem__
 
 
-class Tile(inkex.Effect):
+class Tile(inkcards):
     """First the __init__ which contain The declaration for all command line
     arguments. Then the Helpers, a lot of them should be moved to a super class.
     Then last part contain's the tiling style definitions, which structure the
     layout to tile the cards in different ways, according to the options.
     """
     def __init__(self):
-        inkex.Effect.__init__(self)
+        inkcards.__init__(self)
 
-        self.OptionParser.add_option(
-            '--function', type='string',
-            action="store", dest='function',
-            help="Ignored") 
+        self.arg_parser.add_argument(
+            "-f", "--function", type=str, help="UNUSED")
 
-        self.OptionParser.add_option(
-            '--extension', type='inkbool', default=False,
-            action='store', dest='extension',
-            help="'True' if run as an extension from inkscape")
-
-        self.OptionParser.add_option(
-            '--file', type='string',
+        self.arg_parser.add_argument(
+            '--file', type=str,
             action='store', dest='file',
             help="A path to a file containing the cards.")
 
-        self.OptionParser.add_option(
-            '--deckname', type='string',
+        self.arg_parser.add_argument(
+            '--deckname', type=str, default="card",
             action='store', dest='deckname',
-            help="Name of the deck you want to tile, if more than one, separate by comma.")
+            help="Name of the deck you want to tile, if more than one, separate by comma. Default to \"card\"")
 
-        self.OptionParser.add_option(
-            '--orientation', type='string',
+        self.arg_parser.add_argument(
+            '--orientation', type=str, default=0,
             action='store', dest='orientation',
-            help="The orientation of the card, portrait, landscape, space efficient, ... could add flip/rotations?")
+            help="The rotation of the card (0, 90, 180, -90) of the card ") # Planned to use strings, portrait, landscape, space efficient, ... could add flip/rotations?")
 
-        self.OptionParser.add_option(
-            '--tilestyle', type='string', default='book1p',
+        self.arg_parser.add_argument(
+            '--tilestyle', type=str, default='book1p',
             action='store', dest='tilestyle',
-            help="Choose a tyling layout type (strait, single page (folded), 2 pages).")
+            help="Choose a tiling layout type: \"plain\" for single sided cards, \"book1p\" for single folded page, \"book2p\" for recto verso card.")
 
-        self.OptionParser.add_option(
-            '--vert-brd', type='int', default=0,
+        self.arg_parser.add_argument(
+            '--vert-brd', type=int, default=0,
             action='store', dest='pageVertBrd',
             help="Reserve this border size on the page top/bottom.")
         
-        self.OptionParser.add_option(
-            '--horiz-brd', type='int', default=0,
+        self.arg_parser.add_argument(
+            '--horiz-brd', type=int, default=0,
             action='store', dest='pageHorizBrd',
             help="Reserve this border size on the page left/right.")
         
-        self.OptionParser.add_option(
-            '--cardspacingsize', type='int', default=10,
+        self.arg_parser.add_argument(
+            '--cardspacingsize', type=int, default=10,
             action='store', dest='cardspacingsize',
             help="Set a minimal spacing size between cards. It enlarge the space reserved for a card by half this size")
 
-        self.OptionParser.add_option(
-            '--nospacing', type='inkbool', default=True,
+        self.arg_parser.add_argument(
+            '--nospacing', type=inkex.Boolean, default=True,
             action='store', dest='cardspacing',
-            help="NOT IMPREMENTED: Cards are tiled next to each other, so a single cut is necessary.")
+            help="NOT IMPLEMENTED: Cards would be tiled next to each other, so a single cut is necessary.")
 
     # HELPERS
 
@@ -114,7 +95,7 @@ class Tile(inkex.Effect):
     def defs(self):
         defs = self.document.xpath('//svg:defs', namespaces=NSS)
         if not defs:
-            defs = etree.Element(addNS('defs', 'svg'), attrib={'id':self.uniqueId('defs')}, nsmap=NSS)
+            defs = etree.Element(addNS('defs', 'svg'), attrib={'id':self.svg.get_unique_id('defs')}, nsmap=NSS)
             self.document.getroot().insert(2, defs)
         else:
             defs = defs[0]
@@ -123,7 +104,7 @@ class Tile(inkex.Effect):
     
     def copyLayers(self, doc):
         gLayer = etree.Element(addNS('g', 'svg'), attrib={
-                'id':                           self.uniqueId('layer'),
+                'id':                           self.svg.get_unique_id('layer'),
                 addNS('groupmode', 'inkscape'): 'layer',
                 addNS('label', 'inkscape'):     'inkcards Layers'},
             nsmap=NSS)
@@ -132,39 +113,33 @@ class Tile(inkex.Effect):
         layers = doc.xpath("//svg:g[@inkscape:groupmode='layer']", namespaces=NSS)
 
         for layer in layers:
-	    try:
-	    	layer.attrib.pop('style')
-	    except KeyError:
-		pass
+            try:
+                layer.attrib.pop('style')
+            except KeyError:
+                pass
             gLayer.append(layer)
 	
         return layers
 
     def copyCards(self):
-        try:
-            # This is a hack to be able to use inkex.Effect method with the card document.
-            self.cards = inkex.Effect()
-            farg = '--file='
-            cardFileName = filter(lambda x : x.startswith(farg), sys.argv)[0][len(farg):]
+        farg = '--file='
+        cardFileName = filter(lambda x : x.startswith(farg), sys.argv).__next__()[len(farg):]
+        self.cards = etree.parse(cardFileName)
 
-            self.cards.affect(args=[cardFileName], output=False)
-        except inkcardsError as e:
-            raise inkcardsError("Error while reading the file (%s)\n%s"%(self.options.file, e))
-
-        allLayers = self.copyLayers(self.cards.document)
-        allcards = self.cards.document.xpath('//inkcards:card', namespaces=NSS)
+        allLayers = self.copyLayers(self.cards.getroot())
+        allcards = self.cards.getroot().xpath('//inkcards:card', namespaces=NSS)
         defs = self.defs
         needRear = []
         for nb in range(len(allcards)):
             c = allcards[nb]
             deck_key = addNS('deck', 'inkcards')
             numb_key = addNS('number', 'inkcards')
-            attrib = {'id': self.uniqueId('card'), deck_key: c.attrib[deck_key], numb_key: c.attrib[numb_key]}
+            attrib = {'id': self.svg.get_unique_id('card'), deck_key: c.attrib[deck_key], numb_key: c.attrib[numb_key]}
             cardlayers = c[:]
             card = etree.Element('g', attrib=attrib)
             for l in cardlayers:
                 card.append(etree.Element('use', attrib={
-                    'id': self.uniqueId('use'),
+                    'id': self.svg.get_unique_id('use'),
                     addNS('href', u'xlink'): '#%s'%(l.attrib[addNS('layer', 'inkcards')]),
                     'x': '0',
                     'y': '0',
@@ -178,9 +153,9 @@ class Tile(inkex.Effect):
         for card in needRear:
             oldRearID = self.document.xpath('//g[@inkcards:deck="%s" and @inkcards:number="%s"]/@inkcards:rear'%(card.attrib[addNS('deck', 'inkcards')], card.attrib[addNS('number', 'inkcards')]), namespaces=NSS)[0]
 
-            oldRear = self.cards.getElementById(oldRearID)
-            deck = oldRear.attrib[addNS('deck', 'inkcards')]
-            number = oldRear.attrib[addNS('number', 'inkcards')]
+            oldRear = self.cards.xpath("//*[@id='%s']" % oldRearID)[0]
+            deck = oldRear.attrib[deck_key]
+            number = oldRear.attrib[numb_key]
             newRearID = self.document.xpath('//g[@inkcards:deck="%s" and @inkcards:number="%s"]/@id'%(deck, number), namespaces=NSS)[0]
 
             card.attrib[addNS("rear", "inkcards")] = newRearID
@@ -203,15 +178,15 @@ class Tile(inkex.Effect):
     def docSize(self):
         size = map(lambda x: float(x), self.document.getroot().attrib['viewBox'].split())
         size = struct(zip(['X','Y','W','H'], size))
-        size.X = size.X + self.uutounit(self.options.pageVertBrd, 'mm')
-        size.Y = size.Y + self.uutounit(self.options.pageHorizBrd, 'mm')
-        size.W = size.W - self.uutounit(2*self.options.pageVertBrd, 'mm')
-        size.H = size.H - self.uutounit(2*self.options.pageHorizBrd, 'mm')
+        size.X = size.X + self.svg.uutounit(self.options.pageVertBrd, 'mm')
+        size.Y = size.Y + self.svg.uutounit(self.options.pageHorizBrd, 'mm')
+        size.W = size.W - self.svg.uutounit(2*self.options.pageVertBrd, 'mm')
+        size.H = size.H - self.svg.uutounit(2*self.options.pageHorizBrd, 'mm')
         return size
 
     @property
     def cardSize(self):
-        size = map(lambda x: float(x), self.cards.document.getroot().attrib['viewBox'].split())
+        size = map(lambda x: float(x), self.cards.getroot().attrib['viewBox'].split())
         if self.options.orientation == '90' or self.options.orientation == '-90' :
             return struct(zip(['X','Y','H','W'], size))
         else:
@@ -235,10 +210,11 @@ class Tile(inkex.Effect):
         extraH = (tileH-tileSize.H)/2
         offsetW = docSize.X + extraW
         offsetH = docSize.Y + extraH
-        return map(lambda t: struct(zip(
+
+        return list(map(lambda t: struct(zip(
                 ['X',                           'Y',                           'W',          'H',          'extraW', 'extraH'],
-                   (t%nbColumns*tileW + offsetW,   t/nbColumns*tileH + offsetH,   tileSize.W,   tileSize.H,  extraW,   extraH))),
-             range(nbRows*nbColumns))
+                (t%nbColumns*tileW + offsetW,   math.floor(t/nbColumns)*tileH + offsetH,   tileSize.W,   tileSize.H,  extraW,   extraH))),
+             range(nbRows*nbColumns)))
 
     def nextLayerLabel(self, label):
         Labels = self.document.getroot().xpath('//svg:g[@inkscape:groupmode="layer" and starts-with(@inkscape:label, "%s")]/@inkscape:label'%label, namespaces=NSS)     
@@ -247,7 +223,7 @@ class Tile(inkex.Effect):
 
     def nextPage(self):
         page = etree.Element(addNS('g', 'svg'), attrib={
-                'id':                           self.uniqueId('layer'),
+                'id':                           self.svg.get_unique_id('layer'),
                 addNS('groupmode', 'inkscape'): 'layer',
                 addNS('label', 'inkscape'):     self.nextLayerLabel("Page ")},
             nsmap=NSS)
@@ -260,31 +236,24 @@ class Tile(inkex.Effect):
             layer = layer[0]
         else:
             layer = etree.Element(addNS('g', 'svg'), attrib={
-                'id':                           self.uniqueId('layer'),
+                'id':                           self.svg.get_unique_id('layer'),
                 addNS('groupmode', 'inkscape'): 'layer',
                 addNS('label', 'inkscape'):     "Cut Marks"},
             nsmap=NSS)
             self.document.getroot().append(layer)
         for l in locations:
-            cardlayer = etree.Element(addNS('g', 'svg'), attrib={
-                    'id':                           self.uniqueId('layer'),
-                    addNS('groupmode', 'inkscape'): 'layer',
-                    addNS('label', 'inkscape'):     self.nextLayerLabel("Cut Card ")},
-            nsmap=NSS)
-            layer.append(cardlayer)
-
             for mark in [(l.X     -l.extraW, l.Y,      l.extraW, -l.extraH),
                          (l.X+l.W +l.extraW, l.Y,     -l.extraW, -l.extraH),
                          (l.X     -l.extraW, l.Y+l.H,  l.extraW,  l.extraH),
                          (l.X+l.W +l.extraW, l.Y+l.H, -l.extraW,  l.extraH)]:
-                cardlayer.append(etree.Element(addNS('path', 'svg'), attrib={
-                    'id':       self.uniqueId('layer'),
+                layer.append(etree.Element(addNS('path', 'svg'), attrib={
+                    'id':       self.svg.get_unique_id('layer'),
                     'style':    'fill:none;stroke:#000000;stroke-width:0.5px',
                     'd':        'M %f,%f h %f v %f'%mark}, nsmap=NSS))
 
     def drawFoldLine(self):
         layer = etree.Element(addNS('g', 'svg'), attrib={
-            'id':                           self.uniqueId('layer'),
+            'id':                           self.svg.get_unique_id('layer'),
             addNS('groupmode', 'inkscape'): 'layer',
             addNS('label', 'inkscape'):     "Fold Mark"},
         nsmap=NSS)
@@ -292,7 +261,7 @@ class Tile(inkex.Effect):
         halfdoc = self.docSize
         halfdoc.Y = halfdoc.Y + halfdoc.H/2.0
         layer.append(etree.Element(addNS('path', 'svg'), attrib={
-            'id':       self.uniqueId('layer'),
+            'id':       self.svg.get_unique_id('layer'),
             'style':    'fill:none;stroke:#000000;stroke-width:1.0px',
             'd':        'M {X},{Y} h {W}'.format(**halfdoc)}, nsmap=NSS))
 
@@ -345,7 +314,7 @@ class Tile(inkex.Effect):
         # Flip (exchange/reverse) bottom locations by column
         nbColumns = Tile.nbColumns(bot, self.cardSize, self.options.cardspacingsize)
         nbRows = Tile.nbRows(bot, self.cardSize, self.options.cardspacingsize)
-        for r in range(nbRows/2):
+        for r in range(int(nbRows/2)):
             rs1 = r*nbColumns # rs1 = RowStart1
             rs2 = (nbRows-1-r)*nbColumns # rs2 = RowStart2
             for c in range(nbColumns):
@@ -410,10 +379,12 @@ class Tile(inkex.Effect):
     def effect(self):
         try:
             NSS['inkcards'] = icNS
-            {   "plain"     : self.layoutPlain,
+            x = {"plain"     : self.layoutPlain,
                 "book1p"    : self.layout1P,
                 "book2p"    : self.layout2P,
-            } [re.match('^"?([^"]*)"?$',self.options.tilestyle).group(1)]()
+            }
+            y = re.match('^"?([^"]*)"?$',self.options.tilestyle).group(1)
+            x[y]()
             #self.clean()
         except inkcardsError as e:
             if self.options.extension:
@@ -424,7 +395,7 @@ class Tile(inkex.Effect):
 
 if __name__ == "__main__":
     tile = Tile()
-    tile.affect()
+    tile.run()
     # Return the error only if not called from inkscape as inkex is not expected to report errors.
     if not tile.options.extension:
         sys.exit(errorCode)

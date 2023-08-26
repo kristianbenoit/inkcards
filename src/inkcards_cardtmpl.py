@@ -1,4 +1,4 @@
-#! /usr/bin/python2
+#! /usr/bin/python3
 '''
 Copyright (C) 2018 Kristian Benoit, kristian.benoit@gmail.com
 
@@ -29,25 +29,25 @@ class Card(inkex.Effect):
     def __init__(self):
         inkex.Effect.__init__(self)
 
-        self.OptionParser.add_option(
-            '--extension', type='inkbool', default=False,
+        self.arg_parser.add_argument(
+            '--extension', type=inkex.Boolean, default=False,
             action='store', dest='extension',
             help="'True' if run as an extension from inkscape")
 
-        self.OptionParser.add_option(
-            "-c", "--cardformat", type="string", default="['2.5in', '3.5in']",
+        self.arg_parser.add_argument(
+            "-c", "--cardformat", default="['2.5in', '3.5in']",
             action="store", dest="cardformat",
             help="Size of the document to create. e.g. ['2.5in', '3.5in'] for Poker")
 
-        self.OptionParser.add_option(
-            "-r", "--rotate", type='inkbool', default=False,
+        self.arg_parser.add_argument(
+            "-r", "--rotate", type=inkex.Boolean, default=False,
             action="store", dest="rotate",
             help="Rotate the card 90 ?")
 
     def effect(self):
         cardformat = eval(self.options.cardformat)
 
-        sizeInUU = tuple(map(self.unittouu, cardformat))
+        sizeInUU = tuple(map(self.svg.unittouu, cardformat))
         if self.options.rotate:
             viewbox = '0 0 {1} {0}'.format(*sizeInUU)
             cardformat[0], cardformat[1] = cardformat[1], cardformat[0]
@@ -61,4 +61,4 @@ class Card(inkex.Effect):
 
 if __name__ == "__main__":
     card = Card()
-    card.affect()
+    card.run()

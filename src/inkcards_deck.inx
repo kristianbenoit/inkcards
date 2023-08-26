@@ -1,61 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape">
-    <_name>𝄛 Deck</_name>
-    <id>com.boardgame.inkcards.list</id>
-    <dependency type="executable" location="extensions">inkcards_deck.py</dependency>
-    <dependency type="executable" location="extensions">inkex.py</dependency>
+    <name>𝄛 Deck</name>
+    <id>com.bgg.inkcards.deck</id>
     
-    <param name="extension" type="boolean" gui-hidden="true">true</param>
-    <param name="deckname" type="string" _gui-text="Deck name">card</param>
+    <param name="extension" type="bool" gui-hidden="true">true</param>
+    <hbox>
+        <param name="deckname" type="string" gui-text="Deck name">card</param>
+        <param name="verbose" type="bool" gui-text="Verbose">false</param>
+    </hbox>
     <param name="function" type="notebook">
-        <page name="add" _gui-text="Add card">
-            <_param name="doc" type="description">
-                ★Add a card that uses all the currently displayed layers to the deck named above.
-            </_param>
+        <page name="add" gui-text="Add card">
+            <label>
+                ★Add a card that uses all the currently active layers to the deck named above.
+            </label>
         </page>
-        <page name="remove" _gui-text="Remove card">
-            <_param name="doc" type="description">
+        <page name="remove" gui-text="Remove card">
+            <label>
                 ★Remove the cards that are in the deck named above and are using all the
-                displayed Layers.
-            </_param>
+                currently active Layers.
+            </label>
+            <label indent="1">
+                CTRL-SHIFT-L
+            </label>
+            <hbox>
+                <param name="delbynb" type="bool" gui-text="Or (if checked)">false</param>
+                <param name="cardno" type="int" min="1" max="1000" gui-text="the card numbered">1</param>
+                <label>from the deck named above</label>
+            </hbox>
         </page>
-        <page name="list" _gui-text="List cards">
-            <_param name="doc" type="description">
+        <page name="list" gui-text="List cards">
+            <label>
                 ★Show the decks and cards number of all cards.
-            </_param>
+            </label>
         </page>
-        <page name="activate" _gui-text="Activate layers">
-            <_param name="doc" type="description">
+        <page name="activate" gui-text="Activate layers">
+            <label>
                 ★Show a specific card from the deck named above at a position number.
                 Consult the cards positions using the "List cards" tab.
-            </_param>
-            <param name="activateid" type="int" min="1" max="10000" _gui-text="Card Number: ">
+            </label>
+            <param name="activateid" type="int" min="1" max="1000" gui-text="Card Number: ">
                 1
             </param>
         </page>
-        <page name="shift" _gui-text="Move">
-            <_param name="doc" type="description">
+        <page name="shift" gui-text="Move">
+            <label>
                 ★Change the position of the cards in the deck named above which uses all the
                 dsplayed layers.
-            </_param>
-	    <param name="shiftpos" type="int" min="1" max="1000" _gui-text="move to">1</param>
-	    <param name="vrepos" type="boolean" _gui-text="Verbose">false</param>
+            </label>
+            <param name="shiftpos" type="int" min="1" max="1000" gui-text="move to">1</param>
         </page>
-        <page name="changedeck" _gui-text="Change Deck">
-            <_param name="doc" type="description">
+        <page name="changedeck" gui-text="Change Deck">
+            <label>
                 ★Change the deck of the cards using all the active layers, from the deck
                 named above to the end of the following deck.
-            </_param>
+            </label>
             <param name="destdeck" type="string" gui-text="Move to deck: ">card</param>
         </page>
-        <page name="rear" _gui-text="Define rears">
-            <_param name="doc" type="description">
-               ★Create associations of the fronts that are using the displayed layers and
-	       is in the deck named above with a back deck and position specified below.
-	       (No active layer, sets a default rear for the cards currently in the named deck.)
-            </_param>
-            <param name="reardeck" type="string" _gui-text="Deck name of the rear:">rear</param>
-            <param name="rearnb" type="int" min="1" max="1000" _gui-text="Rear position in the deck:">1</param>
+        <page name="rear" gui-text="Define rears">
+            <label>
+               ★Create associations of the front cards that are using the active layers and
+               is in the deck named above with a back deck and position specified below.
+               (No active layer, sets a default rear for the cards currently in the named deck.)
+            </label>
+            <hbox>
+                <param name="reardeck" type="string" gui-text="Deck name of the rear:">rear</param>
+                <param name="rearnb" type="int" min="1" max="1000" gui-text="Rear position in the deck:">1</param>
+            </hbox>
         </page>
     </param>
 
@@ -66,6 +76,6 @@
         </effects-menu>
     </effect>
     <script>
-	<command reldir="extensions" interpreter="python">inkcards_deck.py</command>
+        <command location="inx" interpreter="python">inkcards_deck.py</command>
     </script>
 </inkscape-extension>
