@@ -24,7 +24,7 @@ extensions/🃟 inkcards...
 Suppose you are creating a smiley based game, where you have some cards
 representing different smiley. We can create a *base* layer to give the card
 background on top of which we have a *Yellow face* layer containing a single
-yellow circle. Then we can draw face element in a *Eyes* and *Mouth*. We can
+yellow circle. Then we can draw face element with the *Eyes* and *Mouth* sub layers. We can
 then create the smiley cards by choosing the layers to use.
 
 ![Card Layers](https://github.com/kristianbenoit/inkcards/blob/4e21ccdbfe2adec54e0f0300f0fa388046c28512/smile.png)
@@ -35,8 +35,8 @@ of cards.
 
 ![inkcards deck](https://github.com/kristianbenoit/inkcards/blob/4e21ccdbfe2adec54e0f0300f0fa388046c28512/list.png)
 
-Using the *inkcards_tile* extension, from a second, printable sized, *SVG*, we
-can are copying each layers in the *<def>* section and *<use>* them for each
+Using the `inkcards_tile` extension, from a second, printable sized, *SVG*, we
+are copying each layers in the `<def>` section and `<use>` them for each
 card making use of it.
 
 ![inkcards tile](https://github.com/kristianbenoit/inkcards/blob/4e21ccdbfe2adec54e0f0300f0fa388046c28512/tile.png)
